@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 public class NettyRpcClient {
 
     public RpcResponse connectionAndSend(String serverIp, int serverPort, RpcRequest rpcRequest) {
-        // 如果 Channel 不存在就建立一个 Channel。
+
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
             Bootstrap bootstrap = new Bootstrap();
@@ -29,22 +29,28 @@ public class NettyRpcClient {
                     .channel(NioSocketChannel.class)
                     // 客户端不是主从 Reactor 没有 childHandler 的说法
                     .handler(new RpcClientInitializer());
+
             // 1. 建立连接
             ChannelFuture f = bootstrap.connect(serverIp, serverPort).sync();
             if (f.isSuccess()) {
+
                 // 2. 保存 Channel，每个实例创建好 Channel 后面复用
-                Channel channel = f.channel();
-                RpcRequestHolder.addChannelMapping(serverIp, serverPort, channel);
-                // 3. 发送数据
+                // Channel channel = f.channel();
+                // RpcRequestHolder.addChannelMapping(serverIp, serverPort, channel);
+
                 /*
                  这里是 nio 线程异步执行的，所以通过 Promise 阻塞然后获取
                  但是获取异步回调还有问题，请求和响应需要一一对应。不然在高并
                  发的场景下，会发生请求和响应不一致的问题。
                 */
                 // channel = RpcRequestHolder.getChannel(serverIp, serverPort);
-                RequestPromise requestPromise = new RequestPromise(channel.eventLoop());
+
+                // 3. 保存 Promise
+                RequestPromise requestPromise = new RequestPromise(f.channel().eventLoop());
                 RpcRequestHolder.addRequestPromise(rpcRequest.getRequestId(), requestPromise);
-                channel.writeAndFlush(rpcRequest).addListener(future -> {
+
+                // 4. 发送数据
+                f.channel().writeAndFlush(rpcRequest).addListener(future -> {
                     if (future.isSuccess()) {
                         log.info("RpcRequest 发送成功: {}", rpcRequest);
                     } else {
@@ -53,17 +59,21 @@ public class NettyRpcClient {
                     }
                 });
 
-                // 4. 获取异步结果
+                // 5. 获取异步结果
                 try {
                     RpcResponse rpcResponse = requestPromise.get();
+                    if (rpcResponse == null) {
+                        throw new RuntimeException("远程调用异常");
+                    }
                     log.info("收到响应:{}", rpcResponse);
                     return rpcResponse;
                 } catch (InterruptedException | ExecutionException e) {
                     log.info("获取异步结果错误,{}", e.getMessage());
                     throw new RuntimeException(e);
                 } finally {
-                    // 移除 Promise 防止 OOM
+                    // 6. 移除 Promise 防止 OOM
                     RpcRequestHolder.removeRequestPromise(rpcRequest.getRequestId());
+                    // 7. 关闭连接
                 }
 
             }
