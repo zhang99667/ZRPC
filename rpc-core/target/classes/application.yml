@@ -1,5 +1,0 @@
-rpc:
-  name: ZRPC
-  version: 1.0
-  server-host: localhost
-  server-port: 8090
