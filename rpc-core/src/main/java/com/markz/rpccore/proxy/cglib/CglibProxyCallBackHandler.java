@@ -30,7 +30,7 @@ public class CglibProxyCallBackHandler extends AbstractProxyCallBackHandler {
         // 1. 封装 RpcRequest
         RpcRequest rpcRequest = getRpcRequest(method);
         // 2. 发送 RpcRequest，拿到 RpcResponse
-        return getRpcResponse(rpcRequest);
+        return getRpcResponse(rpcRequest).getResult();
     }
 
     @Override
