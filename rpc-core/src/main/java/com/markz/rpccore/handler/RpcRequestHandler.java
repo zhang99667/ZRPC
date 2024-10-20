@@ -20,7 +20,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest rpcRequest) throws Exception {
-        log.info("RpcRequestHandler 收到请求为:{}", rpcRequest);
+        log.info("收到请求:{}", rpcRequest);
 
         // 1. 解析请求
         String requestId = rpcRequest.getRequestId();
@@ -47,7 +47,14 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
             log.info("{}方法执行失败: {}", methodName, e.getMessage());
         } finally {
             // 5. 返回结果
-            ctx.channel().writeAndFlush(rpcRequest);
+            ctx.channel().writeAndFlush(rpcResponse).addListener(future -> {
+                if (future.isSuccess()) {
+                    log.info("RpcResponse 发送成功: {}", rpcResponse);
+                } else {
+                    log.error("RpcResponse 发送失败: {}", future.cause().getMessage());
+                    throw new RuntimeException("RpcResponse 发送失败: {}" + future.cause().getMessage());
+                }
+            });
         }
     }
 
@@ -55,5 +62,11 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         log.info("连接就绪");
         super.channelActive(ctx);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        log.error("通道异常：{}", cause.getMessage());
+        ctx.close();
     }
 }

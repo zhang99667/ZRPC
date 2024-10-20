@@ -25,6 +25,14 @@ public class RpcResponseHandler extends SimpleChannelInboundHandler<RpcResponse>
         if (requestPromise != null) {
             // setSuccess 结束阻塞
             requestPromise.setSuccess(rpcResponse);
+        } else {
+            log.error("没有匹配到 RequestPromise，requestId: {}", rpcResponse.getRequestId());
         }
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        log.error("通道异常：{}", cause.getMessage());
+        ctx.close();
     }
 }
