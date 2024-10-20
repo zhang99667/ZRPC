@@ -1,7 +1,7 @@
 package com.markz.rpccore.loadbalancer;
 
 import cn.hutool.core.net.NetUtil;
-import com.markz.rpccore.model.ServiceMeta;
+import com.markz.rpccore.model.ServiceProviderMeta;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 public class HashLoadBalancer implements LoadBalance {
 
     @Override
-    public ServiceMeta selectServer(List<ServiceMeta> serviceMetaList) {
+    public ServiceProviderMeta selectServer(List<ServiceProviderMeta> serviceMetaList) {
         LinkedHashSet<String> ipv4s = NetUtil.localIpv4s();
         Object[] ipv4Array = ipv4s.stream().toArray();
         String ipv4 = (String) ipv4Array[0];
