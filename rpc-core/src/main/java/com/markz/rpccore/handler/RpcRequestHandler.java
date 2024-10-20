@@ -12,14 +12,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * 接受 Request
+ * 接受 Request，返回 Response
  */
 @Slf4j
 @ChannelHandler.Sharable
 public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest rpcRequest) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, RpcRequest rpcRequest) {
         log.info("收到请求:{}", rpcRequest);
 
         // 1. 解析请求
@@ -33,7 +33,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
         RpcResponse rpcResponse = new RpcResponse();
         rpcResponse.setRequestId(requestId);
 
-        // 3. 寻找目标 bean，通过反射调用
+        // 3. 寻找目标 bean，反射回调结果
         try {
             Object bean = SpringBeanFactory.getBean(Class.forName(serviceName));
             Method method = bean.getClass().getMethod(methodName, parameterTypes);
@@ -43,6 +43,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
 
         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException |
                  IllegalArgumentException | InvocationTargetException e) {
+            // 4. 封装响应
             rpcResponse.setException(e);
             log.info("{}方法执行失败: {}", methodName, e.getMessage());
         } finally {
