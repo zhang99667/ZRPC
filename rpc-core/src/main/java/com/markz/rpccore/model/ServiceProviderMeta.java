@@ -31,8 +31,9 @@ public class ServiceProviderMeta {
 
     /**
      * 返回 key
-     * 格式：/rpc/com.markz.Service.UserService/localhost:8081
-     * @return
+     * 格式：/com.markz.Service.UserService/localhost:8081
+     *
+     * @return String: com.markz.Service.UserService/localhost:8081
      */
     public String getServiceKey() {
         return String.format("%s/%s:%s", serviceName, serviceHost, servicePort);
