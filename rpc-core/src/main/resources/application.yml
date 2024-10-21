@@ -3,3 +3,7 @@ rpc:
   version: 1.0
   server-host: localhost
   server-port: 8090
+  registry:
+    host: 122.51.24.81
+    port: 2181
+    timeout: 10000
