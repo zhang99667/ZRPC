@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "rpc")
-public class RpcConfig {
+public class RpcConfiguration {
     /**
      * 服务名称
      */
