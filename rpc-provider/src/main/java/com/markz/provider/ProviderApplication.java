@@ -1,6 +1,7 @@
 package com.markz.provider;
 
 import com.markz.rpccore.bootstrap.service.NettyRpcService;
+import com.markz.rpccore.bootstrap.service.RpcServiceBootstrap;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,7 +14,7 @@ import javax.annotation.Resource;
 public class ProviderApplication implements CommandLineRunner {
 
     @Resource
-    private NettyRpcService nettyRpcService;
+    private RpcServiceBootstrap rpcServiceBootstrap;
 
     public static void main(String[] args) {
         SpringApplication.run(ProviderApplication.class, args);
@@ -21,6 +22,6 @@ public class ProviderApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        nettyRpcService.startServer(8090);
+        rpcServiceBootstrap.run();
     }
 }
