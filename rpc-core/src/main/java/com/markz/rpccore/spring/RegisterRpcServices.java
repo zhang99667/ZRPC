@@ -1,9 +1,11 @@
 package com.markz.rpccore.spring;
 
 import com.markz.rpccore.annotation.RpcService;
+import com.markz.rpccore.bootstrap.service.RpcServer;
+import com.markz.rpccore.config.RegistryConfiguration;
 import com.markz.rpccore.model.ServiceProviderMeta;
-import com.markz.rpccore.registry.ServiceRegistry;
-import com.markz.rpccore.registry.zookeeper.ZookeeperClient;
+import com.markz.rpccore.registry.Registry;
+import com.markz.rpccore.registry.RegistryFactory;
 import com.markz.rpccore.util.SpringBeanFactory;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +17,8 @@ import javax.annotation.Resource;
 @Component
 public class RegisterRpcServices {
 
-    // @Resource
-    // private ZookeeperClient registry;
+    @Resource
+    private RegistryConfiguration registryConfiguration;
 
     /**
      * 扫描 RpcService 注解
@@ -39,7 +41,8 @@ public class RegisterRpcServices {
      * @param bean bean
      */
     private void registerService(Object bean) {
-        String serviceName = bean.getClass().getName();
+        Class<?> serviceInterface = bean.getClass().getAnnotation(RpcService.class).serviceInterface();
+        String serviceName = serviceInterface.getName();
         String serviceHost = "localhost";
         String servicePort = "8090";
 
@@ -48,6 +51,8 @@ public class RegisterRpcServices {
         serviceProviderMeta.setServiceHost(serviceHost);
         serviceProviderMeta.setServicePort(servicePort);
         // 注册服务到 Zookeeper
-        // registry.registerService(serviceProviderMeta);
+        String type = registryConfiguration.getType();
+        Registry registry = RegistryFactory.getRegistry(type);
+        registry.registerService(serviceProviderMeta);
     }
 }
