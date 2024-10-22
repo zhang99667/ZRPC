@@ -35,4 +35,9 @@ public class RpcConfiguration {
      * 序列化器
      */
     private String serializerType;
+
+    /**
+     * 指示当前是 client 还是 server
+     */
+    private String cors;
 }
