@@ -30,4 +30,9 @@ public class RpcConfiguration {
      * 端口号
      */
     private Integer serverPort = 8090;
+
+    /**
+     * 序列化器
+     */
+    private String serializerType;
 }
