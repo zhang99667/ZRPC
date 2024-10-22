@@ -1,6 +1,7 @@
 package com.markz.rpccore;
 
 import com.markz.rpccore.config.RegistryConfiguration;
+import com.markz.rpccore.registry.zookeeper.ZookeeperClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -18,6 +19,9 @@ public class ZkClientTest {
     private CuratorFramework zkClient;
 
     @Resource
+    private ZookeeperClient zk;
+
+    @Resource
     private RegistryConfiguration registryConfiguration;
 
     public final String ZK_ROOT = "/rpc";
@@ -27,11 +31,12 @@ public class ZkClientTest {
      */
     @Test
     void start() throws InterruptedException {
-        init();
-        registerService("com.markz.Service.UserService", "localhost:8081");
-        Thread.sleep(1000);
-        String s = discoverService("com.markz.Service.UserService");
-        System.out.println(s);
+        // init();
+        zk.init();
+        // registerService("com.markz.Service.UserService", "localhost:8081");
+        // Thread.sleep(1000);
+        // String s = discoverService("com.markz.Service.UserService");
+        // System.out.println(s);
         Thread.sleep(1000);
         shutdown();
     }
