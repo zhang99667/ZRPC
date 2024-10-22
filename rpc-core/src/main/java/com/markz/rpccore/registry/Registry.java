@@ -4,7 +4,7 @@ import com.markz.rpccore.model.ServiceProviderMeta;
 
 import java.util.List;
 
-public interface ServiceRegistry {
+public interface Registry {
     /**
      * 初始化客户端
      */
@@ -35,5 +35,5 @@ public interface ServiceRegistry {
     /**
      * 关闭客户端
      */
-    void shutdown();
+    void destroy();
 }
