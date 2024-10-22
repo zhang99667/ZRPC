@@ -6,7 +6,7 @@ import com.markz.rpccore.annotation.RpcService;
 import org.springframework.stereotype.Service;
 
 @Service
-@RpcService
+@RpcService(serviceInterface = UserService.class)
 public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Integer id) {
