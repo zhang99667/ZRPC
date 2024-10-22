@@ -14,7 +14,7 @@ public class RegistryConfiguration {
     /**
      * 注册中心类型
      */
-    private String registry;
+    private String type;
 
     /**
      * 注册中心地址
