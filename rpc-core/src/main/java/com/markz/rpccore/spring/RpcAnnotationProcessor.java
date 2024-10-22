@@ -1,12 +1,16 @@
 package com.markz.rpccore.spring;
 
 import com.markz.rpccore.annotation.RpcReference;
+import com.markz.rpccore.annotation.RpcService;
+import com.markz.rpccore.model.ServiceProviderMeta;
 import com.markz.rpccore.proxy.cglib.CglibRequestProxyFactory;
+import com.markz.rpccore.registry.zookeeper.ZookeeperClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import java.lang.reflect.Field;
 
@@ -27,7 +31,13 @@ public class RpcAnnotationProcessor implements BeanPostProcessor {
      * @throws BeansException BeansException
      */
     @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+    public Object postProcessAfterInitialization(@Nullable Object bean, @Nullable String beanName) throws BeansException {
+        // 如果是 null，直接返回
+        if (bean == null || beanName == null) {
+            return bean;
+        }
+
+        // 1. 客户端 Service 代理注入
         Field[] declaredFields = bean.getClass().getDeclaredFields();
         for (Field declaredField : declaredFields) {
             injectServiceProxy(bean, declaredField);
@@ -36,7 +46,7 @@ public class RpcAnnotationProcessor implements BeanPostProcessor {
     }
 
     /**
-     * 客户端 Service 代理注入
+     * 对 RpcReference 注解修饰的 Service 代理注入
      *
      * @param bean          原始 bean
      * @param declaredField bean 声明的字段
