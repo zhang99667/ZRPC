@@ -17,7 +17,6 @@ public class SpringBeanFactory implements ApplicationContextAware {
      * 设置 applicationContext
      *
      * @param applicationContext ApplicationContext
-     * @throws BeansException
      */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -37,7 +36,7 @@ public class SpringBeanFactory implements ApplicationContextAware {
      * 通过名称获取 Bean
      *
      * @param beanName beanName
-     * @return
+     * @return bean
      */
     public static Object getBean(String beanName) {
         return getApplicationContext().getBean(beanName);
@@ -47,8 +46,8 @@ public class SpringBeanFactory implements ApplicationContextAware {
      * 通过类型获取 Bean
      *
      * @param clazz service class
-     * @param <T>
-     * @return
+     * @param <T>   T
+     * @return bean
      */
     public static <T> T getBean(Class<T> clazz) {
         return getApplicationContext().getBean(clazz);
@@ -59,10 +58,19 @@ public class SpringBeanFactory implements ApplicationContextAware {
      *
      * @param name  beanName
      * @param clazz service class
-     * @param <T>
-     * @return
+     * @param <T>   T
+     * @return bean
      */
     public static <T> T getBean(String name, Class<T> clazz) {
         return getApplicationContext().getBean(name, clazz);
+    }
+
+    /**
+     * 获取 Spring 上下文中的所有 Bean
+     *
+     * @return BeanDefinitionNames
+     */
+    public static String[] getBeanDefinitionNames() {
+        return getApplicationContext().getBeanDefinitionNames();
     }
 }
