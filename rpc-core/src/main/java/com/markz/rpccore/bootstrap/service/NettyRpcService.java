@@ -10,8 +10,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-
 /**
  * 基于 Netty 的 rpc 服务端
  */
@@ -36,7 +34,7 @@ public class NettyRpcService implements RpcServer {
             // Bind and start to accept incoming connections.
             ChannelFuture channelFuture = bootstrap.bind(8090).sync(); // (7)
             log.info("Netty 服务器启动...");
-            log.info("正在监听端口{}...", port);
+            log.info("正在监听端口 {}...", port);
             // Wait until the server socket is closed.
             // In this example, this does not happen, but you can do that to gracefully
             // shut down your server.
