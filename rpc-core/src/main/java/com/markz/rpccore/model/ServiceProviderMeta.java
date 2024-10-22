@@ -31,7 +31,9 @@ public class ServiceProviderMeta {
 
     /**
      * 返回 key
-     * 格式：/com.markz.Service.UserService/localhost:8081
+     * 格式：类全限定名/主机:端口
+     * <p>
+     * com.markz.Service.UserService/localhost:8081
      *
      * @return String: com.markz.Service.UserService/localhost:8081
      */
