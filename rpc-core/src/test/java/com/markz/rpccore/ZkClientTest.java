@@ -1,7 +1,9 @@
 package com.markz.rpccore;
 
 import com.markz.rpccore.config.RegistryConfiguration;
+import com.markz.rpccore.registry.Registry;
 import com.markz.rpccore.registry.zookeeper.ZookeeperClient;
+import com.markz.rpccore.util.SpiLoader;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -19,9 +21,6 @@ public class ZkClientTest {
     private CuratorFramework zkClient;
 
     @Resource
-    private ZookeeperClient zk;
-
-    @Resource
     private RegistryConfiguration registryConfiguration;
 
     public final String ZK_ROOT = "/rpc";
@@ -31,12 +30,11 @@ public class ZkClientTest {
      */
     @Test
     void start() throws InterruptedException {
-        // init();
-        zk.init();
-        // registerService("com.markz.Service.UserService", "localhost:8081");
-        // Thread.sleep(1000);
-        // String s = discoverService("com.markz.Service.UserService");
-        // System.out.println(s);
+        init();
+        registerService("com.markz.Service.UserService", "localhost:8081");
+        Thread.sleep(1000);
+        String s = discoverService("com.markz.Service.UserService");
+        System.out.println(s);
         Thread.sleep(1000);
         shutdown();
     }
@@ -100,5 +98,17 @@ public class ZkClientTest {
             log.error("服务发现失败: {}", e.getMessage());
             return null;
         }
+    }
+
+    @Test
+    void SpiTest() {
+        Registry registry = SpiLoader.getInstance(Registry.class, registryConfiguration.getType());
+        registry.init();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        registry.destroy();
     }
 }
