@@ -22,7 +22,7 @@ public class ServiceProviderMeta {
     /**
      * 端口号
      */
-    private String servicePort;
+    private int servicePort;
 
     /**
      * 服务提供者权重，用于 loadbalancer
