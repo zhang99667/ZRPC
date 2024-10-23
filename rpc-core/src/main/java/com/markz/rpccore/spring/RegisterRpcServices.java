@@ -5,6 +5,7 @@ import com.markz.rpccore.holder.RpcConfigurationHolder;
 import com.markz.rpccore.model.ServiceProviderMeta;
 import com.markz.rpccore.registry.Registry;
 import com.markz.rpccore.registry.RegistryFactory;
+import com.markz.rpccore.util.NetworkUtils;
 import com.markz.rpccore.util.SpringBeanFactory;
 import org.springframework.stereotype.Component;
 
@@ -36,8 +37,9 @@ public class RegisterRpcServices {
     private void registerService(Object bean) {
         Class<?> serviceInterface = bean.getClass().getAnnotation(RpcService.class).serviceInterface();
         String serviceName = serviceInterface.getName();
-        String serviceHost = "localhost";
-        String servicePort = "8090";
+        String serviceHost = null;
+        int servicePort = RpcConfigurationHolder.getRegistryConfig().getPort();
+        serviceHost = NetworkUtils.getLocalHostIp();
 
         ServiceProviderMeta serviceProviderMeta = new ServiceProviderMeta();
         serviceProviderMeta.setServiceName(serviceName);
