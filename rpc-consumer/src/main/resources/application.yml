@@ -6,6 +6,8 @@ rpc:
   server-host: localhost
   server-port: 8090
   cors: client
+  serializer-type: fastjson
+  loadbalancer-type: round-robin
   registry:
     type: zookeeper
     host: 122.51.24.81

@@ -4,6 +4,7 @@ rpc:
   server-host: localhost
   server-port: 8090
   cors: server
+  serializer-type: fastjson
   registry:
     type: zookeeper
     host: 122.51.24.81
