@@ -32,9 +32,14 @@ public class RpcConfiguration {
     private Integer serverPort = 8090;
 
     /**
-     * 序列化器
+     * 序列化器类型
      */
     private String serializerType;
+
+    /**
+     * 负载均衡器类型
+     */
+    private String loadbalancerType;
 
     /**
      * 指示当前是 client 还是 server
