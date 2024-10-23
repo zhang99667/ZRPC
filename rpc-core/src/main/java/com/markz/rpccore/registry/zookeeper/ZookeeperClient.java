@@ -129,7 +129,7 @@ public class ZookeeperClient implements Registry {
                     ServiceProviderMeta serviceProviderMeta = new ServiceProviderMeta();
                     serviceProviderMeta.setServiceName(serviceName);  // 设置服务名称
                     serviceProviderMeta.setServiceHost(hostPort[0]); // 设置主机名
-                    serviceProviderMeta.setServicePort(hostPort[1]); // 设置端口号
+                    serviceProviderMeta.setServicePort(Integer.parseInt(hostPort[1])); // 设置端口号
                     serviceProviderMeta.setWeight(100); // 默认权重，可从配置中读取
                     serviceProviderMetaList.add(serviceProviderMeta);
                 }
