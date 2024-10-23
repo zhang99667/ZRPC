@@ -32,6 +32,12 @@ public class RpcRequestHolder {
         REQUEST_PROMISE_MAP.put(requestId, requestPromise);
     }
 
+    /**
+     * 获取 requestPromise
+     *
+     * @param requestId requestId
+     * @return requestPromise
+     */
     public static RequestPromise getRequestPromise(String requestId) {
         return REQUEST_PROMISE_MAP.get(requestId);
     }
@@ -71,9 +77,9 @@ public class RpcRequestHolder {
     /**
      * 添加 Channel
      *
-     * @param serverIp       serverIp
-     * @param serverPort     serverPort
-     * @param channel Channel
+     * @param serverIp   serverIp
+     * @param serverPort serverPort
+     * @param channel    Channel
      */
     public static void addChannelMapping(String serverIp, int serverPort, Channel channel) {
         String key = getChannelMappingKeyByServerIpAndPort(serverIp, serverPort);
