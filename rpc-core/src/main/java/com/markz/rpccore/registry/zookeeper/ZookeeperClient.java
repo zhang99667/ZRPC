@@ -1,15 +1,15 @@
 package com.markz.rpccore.registry.zookeeper;
 
 import com.markz.rpccore.config.RegistryConfiguration;
+import com.markz.rpccore.holder.RpcConfigurationHolder;
 import com.markz.rpccore.model.ServiceProviderMeta;
-import com.markz.rpccore.registry.ServiceRegistry;
+import com.markz.rpccore.registry.Registry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.springframework.stereotype.Component;
+import org.apache.zookeeper.CreateMode;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,22 +17,24 @@ import java.util.List;
  * Zookeeper 客户端，负责连接 Zookeeper 并进行服务注册和发现
  */
 @Slf4j
-// @Component
-public class ZookeeperClient implements ServiceRegistry {
+public class ZookeeperClient implements Registry {
 
     public CuratorFramework zkClient;
 
-    @Resource
-    private RegistryConfiguration registryConfiguration;
+    private String zkRoot;
 
     /**
      * 初始化 zk 客户端
      */
     @Override
     public void init() {
-        String zkAddress = registryConfiguration.getZkAddress();
-        int zkTimeout = registryConfiguration.getTimeout();
-        // 1. 构建 client 实例
+        // 1. 读取配置文件
+        RegistryConfiguration configuration = RpcConfigurationHolder.getRegistryConfig();
+        zkRoot = configuration.getZkRoot();
+        String zkAddress = configuration.getZkAddress();
+        int zkTimeout = configuration.getTimeout();
+
+        // 2. 构建 client 实例
         zkClient = CuratorFrameworkFactory.builder()
                 .connectString(zkAddress)
                 .connectionTimeoutMs(zkTimeout)
@@ -58,18 +60,30 @@ public class ZookeeperClient implements ServiceRegistry {
     }
 
     /**
-     * 注册服务到 Zookeeper
+     * 注册服务到 Zookeeper（临时节点）
      *
      * @param serviceProviderMeta 服务提供者元信息
      */
     @Override
     public void registerService(ServiceProviderMeta serviceProviderMeta) {
-        String zkRoot = registryConfiguration.getZkRoot();
-        String serviceKey = serviceProviderMeta.getServiceKey();
 
+        // 1. 创建 zkRoot 节点（永久）
+        try {
+            if (zkClient.checkExists().forPath(zkRoot) == null) {
+                zkClient.create().creatingParentsIfNeeded().forPath(zkRoot);
+                log.info("Zookeeper 根节点已创建");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        // 2. 注册服务
+        String serviceKey = serviceProviderMeta.getServiceKey();
         try {
             String path = zkRoot + "/" + serviceKey;
-            zkClient.create().creatingParentsIfNeeded().forPath(path);
+            zkClient.create().creatingParentsIfNeeded()
+                    .withMode(CreateMode.EPHEMERAL)
+                    .forPath(path);
             log.info("服务注册成功: {}", path);
         } catch (Exception e) {
             log.error("服务注册失败: {}", e.getMessage());
@@ -83,9 +97,7 @@ public class ZookeeperClient implements ServiceRegistry {
      */
     @Override
     public void unRegisterService(ServiceProviderMeta serviceProviderMeta) {
-        String zkRoot = registryConfiguration.getZkRoot();
         String serviceKey = serviceProviderMeta.getServiceKey();
-
         try {
             String path = zkRoot + "/" + serviceKey;
             zkClient.delete().deletingChildrenIfNeeded().forPath(path);
@@ -105,7 +117,7 @@ public class ZookeeperClient implements ServiceRegistry {
     @Override
     public List<ServiceProviderMeta> serviceDiscovery(String serviceName) {
         try {
-            String path = registryConfiguration.getZkRoot() + "/" + serviceName;
+            String path = zkRoot + "/" + serviceName;
             // 获取注册的服务地址列表
             List<String> serviceAddresses = zkClient.getChildren().forPath(path);
             List<ServiceProviderMeta> serviceProviderMetaList = new ArrayList<>();
@@ -136,7 +148,7 @@ public class ZookeeperClient implements ServiceRegistry {
      * 关闭 zk 客户端
      */
     @Override
-    public void shutdown() {
+    public void destroy() {
         if (zkClient != null) {
             zkClient.close();
             log.info("Zookeeper 客户端已关闭！");
