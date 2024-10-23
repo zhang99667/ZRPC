@@ -23,7 +23,7 @@ public class CglibProxyCallBackHandler extends AbstractProxyCallBackHandler {
 
     @Override
     public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        // 过滤 Object 类中的方法，避免拦截
+        // 过滤 Object 类中的方法，Object 是基类，调用它的方法都会被拦截
         if (method.getDeclaringClass() == Object.class) {
             return methodProxy.invokeSuper(o, objects);
         }
