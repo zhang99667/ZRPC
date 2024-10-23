@@ -2,6 +2,7 @@ package com.markz.rpccore.bootstrap.service;
 
 import com.markz.rpccore.config.RegistryConfiguration;
 import com.markz.rpccore.config.RpcConfiguration;
+import com.markz.rpccore.holder.RpcConfigurationHolder;
 import com.markz.rpccore.registry.Registry;
 import com.markz.rpccore.registry.RegistryFactory;
 import com.markz.rpccore.spring.RegisterRpcServices;
@@ -36,14 +37,18 @@ public class RpcServiceBootstrap implements ApplicationListener<ContextRefreshed
     private RegistryConfiguration registryConfiguration;
 
     public void run() throws InterruptedException {
-        // 1. 连接注册中心
-        String registry = registryConfiguration.getType();
-        Registry zookeeper = RegistryFactory.getRegistry(registry);
-        zookeeper.init();
+        // 1. 保存配置文件
+        RpcConfigurationHolder.addRegistryConfiguration(registryConfiguration);
+        RpcConfigurationHolder.addRpcConfiguration(rpcConfiguration);
 
-        // 2. 注册服务
+        // 2. 连接注册中心
+        String registryType = registryConfiguration.getType();
+        Registry registry = RegistryFactory.getRegistry(registryType);
+        registry.init();
+
+        // 3. 注册服务
         registerRpcServices.registerServices();
-        // 3. start server by netty
+        // 4. start server by netty
         rpcService.startServer(rpcConfiguration.getServerPort());
     }
 
