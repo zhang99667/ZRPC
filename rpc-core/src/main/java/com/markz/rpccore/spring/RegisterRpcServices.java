@@ -38,7 +38,7 @@ public class RegisterRpcServices {
         Class<?> serviceInterface = bean.getClass().getAnnotation(RpcService.class).serviceInterface();
         String serviceName = serviceInterface.getName();
         String serviceHost = null;
-        int servicePort = RpcConfigurationHolder.getRegistryConfig().getPort();
+        int servicePort = RpcConfigurationHolder.getRpcConfig().getServerPort();
         serviceHost = NetworkUtils.getLocalHostIp();
 
         ServiceProviderMeta serviceProviderMeta = new ServiceProviderMeta();
