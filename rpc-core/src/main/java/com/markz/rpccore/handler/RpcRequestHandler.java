@@ -2,6 +2,9 @@ package com.markz.rpccore.handler;
 
 import com.markz.common.entity.rpc.RpcRequest;
 import com.markz.common.entity.rpc.RpcResponse;
+import com.markz.rpccore.protocol.ProtocolHeader;
+import com.markz.rpccore.protocol.ProtocolMessage;
+import com.markz.rpccore.protocol.ProtocolMessageTypeEnum;
 import com.markz.rpccore.util.SpringBeanFactory;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -48,9 +51,16 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
             log.info("{}方法执行失败: {}", methodName, e.getMessage());
         } finally {
             // 5. 返回结果
-            ctx.channel().writeAndFlush(rpcResponse).addListener(future -> {
+            ProtocolMessage<Object> message = new ProtocolMessage<>();
+            ProtocolHeader header = ProtocolHeader.builder()
+                    .requestId(rpcResponse.getRequestId())
+                    .type((byte) ProtocolMessageTypeEnum.RESPONSE.ordinal())
+                    .build();
+            message.setProtocolHeader(header);
+            message.setBody(rpcResponse);
+            ctx.channel().writeAndFlush(message).addListener(future -> {
                 if (future.isSuccess()) {
-                    log.info("RpcResponse 发送成功: {}", rpcResponse);
+                    log.info("RpcResponse 发送成功: {}", message);
                 } else {
                     log.error("RpcResponse 发送失败: {}", future.cause().getMessage());
                     throw new RuntimeException("RpcResponse 发送失败: {}" + future.cause().getMessage());
