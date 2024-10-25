@@ -4,9 +4,9 @@ import com.markz.common.entity.rpc.RpcRequest;
 import com.markz.common.entity.rpc.RpcResponse;
 import com.markz.rpccore.bootstrap.client.initializer.RpcClientInitializer;
 import com.markz.rpccore.holder.RpcRequestHolder;
+import com.markz.rpccore.protocol.ProtocolMessage;
 import com.markz.rpccore.request.RequestPromise;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 @Component
 public class NettyRpcClient {
 
-    public RpcResponse connectionAndSend(String serverIp, int serverPort, RpcRequest rpcRequest) {
+    public RpcResponse connectionAndSend(String serverIp, int serverPort, ProtocolMessage<RpcRequest> message) {
 
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -47,21 +47,22 @@ public class NettyRpcClient {
 
                 // 3. 保存 Promise
                 RequestPromise requestPromise = new RequestPromise(f.channel().eventLoop());
-                RpcRequestHolder.addRequestPromise(rpcRequest.getRequestId(), requestPromise);
+                RpcRequestHolder.addRequestPromise(message.getProtocolHeader().getRequestId(), requestPromise);
 
                 // 4. 发送数据
-                f.channel().writeAndFlush(rpcRequest).addListener(future -> {
+                f.channel().writeAndFlush(message).addListener(future -> {
                     if (future.isSuccess()) {
-                        log.info("RpcRequest 发送成功: {}", rpcRequest);
+                        log.info("ProtocolMessage<RpcRequest> 发送成功: {}", message);
                     } else {
-                        log.error("RpcRequest 发送失败: {}", future.cause().getMessage());
-                        throw new RuntimeException("RpcRequest 发送失败: {}" + future.cause().getMessage());
+                        log.error("ProtocolMessage<RpcRequest> 发送失败: {}", future.cause().getMessage());
+                        throw new RuntimeException("ProtocolMessage<RpcRequest> 发送失败: {}" + future.cause().getMessage());
                     }
                 });
 
                 // 5. 获取异步结果
+                RpcResponse rpcResponse = null;
                 try {
-                    RpcResponse rpcResponse = requestPromise.get();
+                    rpcResponse = requestPromise.get();
                     if (rpcResponse == null) {
                         throw new RuntimeException("远程调用异常");
                     }
@@ -72,7 +73,7 @@ public class NettyRpcClient {
                     throw new RuntimeException(e);
                 } finally {
                     // 6. 移除 Promise 防止 OOM
-                    RpcRequestHolder.removeRequestPromise(rpcRequest.getRequestId());
+                    RpcRequestHolder.removeRequestPromise(message.getProtocolHeader().getRequestId());
                     // 7. 关闭连接
                 }
 
