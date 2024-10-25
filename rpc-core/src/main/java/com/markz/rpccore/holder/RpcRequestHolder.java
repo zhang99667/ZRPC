@@ -16,7 +16,7 @@ public class RpcRequestHolder {
      * 通过 ConcurrentHashMap 绑定 requestId 和 RequestPromise
      * 保证并发请求下响应的幂等性
      */
-    public static final ConcurrentHashMap<String, RequestPromise> REQUEST_PROMISE_MAP;
+    public static final ConcurrentHashMap<Long, RequestPromise> REQUEST_PROMISE_MAP;
 
     static {
         REQUEST_PROMISE_MAP = new ConcurrentHashMap<>();
@@ -28,7 +28,7 @@ public class RpcRequestHolder {
      * @param requestId      requestId
      * @param requestPromise RequestPromise
      */
-    public static void addRequestPromise(String requestId, RequestPromise requestPromise) {
+    public static void addRequestPromise(Long requestId, RequestPromise requestPromise) {
         REQUEST_PROMISE_MAP.put(requestId, requestPromise);
     }
 
@@ -38,7 +38,7 @@ public class RpcRequestHolder {
      * @param requestId requestId
      * @return requestPromise
      */
-    public static RequestPromise getRequestPromise(String requestId) {
+    public static RequestPromise getRequestPromise(Long requestId) {
         return REQUEST_PROMISE_MAP.get(requestId);
     }
 
@@ -47,7 +47,7 @@ public class RpcRequestHolder {
      *
      * @param requestId requestId
      */
-    public static void removeRequestPromise(String requestId) {
+    public static void removeRequestPromise(Long requestId) {
         REQUEST_PROMISE_MAP.remove(requestId);
     }
 
