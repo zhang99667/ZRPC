@@ -63,8 +63,10 @@ public class RpcRequestManager {
             // 4. 发送数据
             return getResponse(serviceProviderMeta, message);
         } else {
-            log.info("{} 服务当前不可用！", rpcRequest.getServiceName());
-            return new RpcResponse();
+            log.error("{} 服务当前不可用！", rpcRequest.getServiceName());
+            return RpcResponse.builder()
+                    .exception(new RuntimeException(rpcRequest.getServiceName() + "服务不可用"))
+                    .build();
         }
     }
 
