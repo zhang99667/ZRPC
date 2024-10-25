@@ -23,7 +23,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
         log.info("收到请求:{}", rpcRequest);
 
         // 1. 解析请求
-        String requestId = rpcRequest.getRequestId();
+        Long requestId = rpcRequest.getRequestId();
         String serviceName = rpcRequest.getServiceName();
         String methodName = rpcRequest.getMethodName();
         Class<?>[] parameterTypes = rpcRequest.getParameterTypes();
