@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class RegisterRpcServices {
+
     /**
      * 扫描 RpcService 注解
      */
@@ -37,7 +38,7 @@ public class RegisterRpcServices {
     private void registerService(Object bean) {
         Class<?> serviceInterface = bean.getClass().getAnnotation(RpcService.class).serviceInterface();
         String serviceName = serviceInterface.getName();
-        String serviceHost = null;
+        String serviceHost;
         int servicePort = RpcConfigurationHolder.getRpcConfig().getServerPort();
         serviceHost = NetworkUtils.getLocalHostIp();
 
@@ -45,6 +46,7 @@ public class RegisterRpcServices {
         serviceProviderMeta.setServiceName(serviceName);
         serviceProviderMeta.setServiceHost(serviceHost);
         serviceProviderMeta.setServicePort(servicePort);
+
         // 注册服务到 Zookeeper
         String type = RpcConfigurationHolder.getRegistryConfig().getType();
         Registry registry = RegistryFactory.getRegistry(type);
