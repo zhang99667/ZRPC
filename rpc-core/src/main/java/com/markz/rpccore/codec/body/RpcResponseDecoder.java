@@ -1,4 +1,4 @@
-package com.markz.rpccore.codec;
+package com.markz.rpccore.codec.body;
 
 import com.markz.common.entity.rpc.RpcResponse;
 import com.markz.rpccore.serializer.Serializer;
@@ -13,6 +13,7 @@ import java.util.List;
  * 二次解码
  * 反序列化
  */
+@Deprecated
 public class RpcResponseDecoder extends MessageToMessageDecoder<ByteBuf> {
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
