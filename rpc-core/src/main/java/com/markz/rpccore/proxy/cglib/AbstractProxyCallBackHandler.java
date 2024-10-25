@@ -29,7 +29,7 @@ public abstract class AbstractProxyCallBackHandler implements MethodInterceptor 
         // 1. 封装 RpcRequest
         RpcRequest rpcRequest = new RpcRequest();
         // TODO 需要一个 id 生成器
-        rpcRequest.setRequestId("1");
+        rpcRequest.setRequestId(1L);
         rpcRequest.setMethodName(methodName);
         rpcRequest.setServiceName(serviceName);
         rpcRequest.setArgs(args);
