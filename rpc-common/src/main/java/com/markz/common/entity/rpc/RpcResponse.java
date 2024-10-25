@@ -22,7 +22,7 @@ public class RpcResponse implements Serializable {
     /**
      * 请求 ID（响应的哪个请求）
      */
-    private String requestId;
+    private Long requestId;
 
     /**
      * 响应数据
