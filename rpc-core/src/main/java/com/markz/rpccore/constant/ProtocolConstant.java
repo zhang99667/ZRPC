@@ -9,7 +9,7 @@ public class ProtocolConstant {
     /**
      * 消息头长度 Byte
      */
-    public static final Integer MESSAGE_HEADER_LENGTH = 14;
+    public static final Integer MESSAGE_HEADER_LENGTH = 0xE;
 
     /**
      * 魔数
@@ -17,29 +17,36 @@ public class ProtocolConstant {
     public static final byte PROTOCOL_MAGIC = 0x1;
 
 
+    // ************* FrameDecoder *************
     /**
-     * 最大帧长度
+     * 最大帧长度 1kb
      */
-    public static final Integer MAX_FRAME_LENGTH = Integer.MAX_VALUE;
+    public static final Integer MAX_FRAME_LENGTH = 0x400;
 
     /**
      * 长度字段的偏移量
      */
-    public static final Integer LENGTH_FIELD_OFFSET = 0;
+    public static final Integer LENGTH_FIELD_OFFSET = 0xA;
 
     /**
      * 长度字段的长度
      */
-    public static final Integer LENGTH_FIELD_LENGTH = 4;
+    public static final Integer LENGTH_FIELD_LENGTH = 0x4;
 
     /**
      * 长度字段的调整值
      */
-    public static final Integer LENGTH_ADJUSTMENT = 0;
+    public static final Integer LENGTH_ADJUSTMENT = 0x0;
 
     /**
-     * 跳过长度字段后的初始读取位置
+     * 解码后丢弃的长度
      */
-    public static final Integer INITIAL_BYTES_TO_STRIP = 4;
+    public static final Integer INITIAL_BYTES_TO_STRIP = 0x0;
 
+    /**
+     * 最大消息体长度
+     * <p>
+     * MAX_FRAME_LENGTH - LENGTH_FIELD_OFFSET
+     */
+    public static final int MAX_BODY_LENGTH = 0x3F6;
 }
