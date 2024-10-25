@@ -7,6 +7,7 @@ import io.netty.handler.codec.LengthFieldPrepender;
  * 一次编码
  * 解决半包粘包
  */
+@Deprecated
 public class FrameEncoder extends LengthFieldPrepender {
     public FrameEncoder() {
         super(ProtocolConstant.LENGTH_FIELD_LENGTH);
