@@ -1,5 +1,6 @@
 package com.markz.rpccore.proxy.cglib;
 
+import cn.hutool.core.util.IdUtil;
 import com.markz.common.entity.rpc.RpcRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cglib.proxy.MethodInterceptor;
@@ -28,8 +29,8 @@ public abstract class AbstractProxyCallBackHandler implements MethodInterceptor 
         log.info("代理调用拦截, method={}.{}", serviceName, methodName);
         // 1. 封装 RpcRequest
         RpcRequest rpcRequest = new RpcRequest();
-        // TODO 需要一个 id 生成器
-        rpcRequest.setRequestId(1L);
+        String requestId = IdUtil.fastUUID();
+        rpcRequest.setRequestId(Long.valueOf(requestId));
         rpcRequest.setMethodName(methodName);
         rpcRequest.setServiceName(serviceName);
         rpcRequest.setArgs(args);
