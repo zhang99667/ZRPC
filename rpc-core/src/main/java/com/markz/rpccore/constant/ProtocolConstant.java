@@ -12,6 +12,13 @@ public class ProtocolConstant {
     public static final Integer MESSAGE_HEADER_LENGTH = 0xE;
 
     /**
+     * 最大消息体长度
+     * <p>
+     * MAX_BODY_LENGTH = MAX_FRAME_LENGTH - LENGTH_FIELD_OFFSET
+     */
+    public static final int MAX_BODY_LENGTH = 0x3F6;
+
+    /**
      * 魔数
      */
     public static final byte PROTOCOL_MAGIC = 0x1;
@@ -42,11 +49,4 @@ public class ProtocolConstant {
      * 解码后丢弃的长度
      */
     public static final Integer INITIAL_BYTES_TO_STRIP = 0x0;
-
-    /**
-     * 最大消息体长度
-     * <p>
-     * MAX_FRAME_LENGTH - LENGTH_FIELD_OFFSET
-     */
-    public static final int MAX_BODY_LENGTH = 0x3F6;
 }
