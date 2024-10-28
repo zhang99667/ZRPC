@@ -15,10 +15,10 @@ public class ProtocolMessage<T> {
     /**
      * 协议头
      */
-    private ProtocolHeader protocolHeader;
+    protected ProtocolHeader protocolHeader;
 
     /**
      * 协议体
      */
-    private T body;
+    protected T body;
 }
