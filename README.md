@@ -15,7 +15,6 @@ high performance rpc framework based on netty & spring
 ![img.png](img/registry.png)
 
 ### 自定义协议
-
 ![img.png](img/protocol.png)
 这里没有按照上面设计的方式去定义，最后为了方便，舍弃了一些用不到的字段。
 ![img.png](img/protocol_2.jpg)
