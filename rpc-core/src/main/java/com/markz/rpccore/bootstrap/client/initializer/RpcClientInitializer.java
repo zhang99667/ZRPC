@@ -7,7 +7,6 @@ import com.markz.rpccore.codec.protocol.ProtocolDecoder;
 import com.markz.rpccore.codec.protocol.ProtocolEncoder;
 import com.markz.rpccore.handler.ClientIdleHeartBeatHandler;
 import com.markz.rpccore.handler.RpcResponseHandler;
-import com.markz.rpccore.handler.ServerIdleHeartBeatHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 
@@ -17,16 +16,16 @@ import io.netty.channel.ChannelInitializer;
 public class RpcClientInitializer extends ChannelInitializer {
 
     @Override
-    protected void initChannel(Channel ch) throws Exception {
+    protected void initChannel(Channel ch) {
         // outbound handler
         ch.pipeline().addLast("ProtocolEncoder", new ProtocolEncoder()); // 封装成帧
         ch.pipeline().addLast("Serializer", new RpcBodyEncoder());       // 序列化
+        ch.pipeline().addLast("ClientIdleHeartBeatHandler", new ClientIdleHeartBeatHandler()); // 心跳机制
 
         // inbound handler
         ch.pipeline().addLast("FrameDecoder", new FrameDecoder());                             // 定长解码器
         ch.pipeline().addLast("ProtocolDecoder", new ProtocolDecoder());                       // 协议头校验
         ch.pipeline().addLast("Deserializer", new RpcBodyDecoder());                           // 反序列化
-        ch.pipeline().addLast("ClientIdleHeartBeatHandler", new ClientIdleHeartBeatHandler()); // 心跳机制
         ch.pipeline().addLast("RpcResponseHandler", new RpcResponseHandler());                 // 处理 RpcResponse
     }
 }
