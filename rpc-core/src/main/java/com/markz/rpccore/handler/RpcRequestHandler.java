@@ -43,6 +43,7 @@ public class RpcRequestHandler extends SimpleChannelInboundHandler<RpcRequest> {
             Object result = method.invoke(bean, args);
             // 4. 封装响应
             rpcResponse.setResult(result);
+            rpcResponse.setResultType(method.getReturnType());
 
         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException |
                  IllegalArgumentException | InvocationTargetException e) {
