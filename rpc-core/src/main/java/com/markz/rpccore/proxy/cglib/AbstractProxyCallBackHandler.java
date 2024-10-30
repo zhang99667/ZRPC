@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cglib.proxy.MethodInterceptor;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 /**
  * 动态代理回调抽象类，方便做 mock
@@ -20,17 +19,16 @@ public abstract class AbstractProxyCallBackHandler implements MethodInterceptor 
      * @param method 被动态代理的方法
      * @return RpcRequest
      */
-    public RpcRequest getRpcRequest(Method method) {
+    public RpcRequest getRpcRequest(Method method, Object[] args) {
         String methodName = method.getName();
         String serviceName = method.getDeclaringClass().getName();
         Class<?>[] parameterTypes = method.getParameterTypes();
-        Parameter[] args = method.getParameters();
 
         log.info("代理调用拦截, method={}.{}", serviceName, methodName);
         // 1. 封装 RpcRequest
         RpcRequest rpcRequest = new RpcRequest();
-        String requestId = IdUtil.fastUUID();
-        rpcRequest.setRequestId(Long.valueOf(requestId));
+        long requestId = IdUtil.getSnowflakeNextId();
+        rpcRequest.setRequestId(requestId);
         rpcRequest.setMethodName(methodName);
         rpcRequest.setServiceName(serviceName);
         rpcRequest.setArgs(args);
