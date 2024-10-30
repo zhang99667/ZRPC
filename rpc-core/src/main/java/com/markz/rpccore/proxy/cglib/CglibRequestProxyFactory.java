@@ -26,12 +26,13 @@ public class CglibRequestProxyFactory implements ProxyFactory {
 
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(clazz);
-        RpcConfiguration rpcConfig = RpcConfigurationHolder.getRpcConfig();
-        if (rpcConfig.isMock()) {
-            enhancer.setCallback(mockProxyCallBackHandler);
-        } else {
-            enhancer.setCallback(cglibProxyCallBackHandler);
-        }
+        // TODO 这里 RpcConfigurationHolder 还没初始化，报了空指针异常。
+        // RpcConfiguration rpcConfig = RpcConfigurationHolder.getRpcConfig();
+        // if (rpcConfig.isMock()) {
+        //     enhancer.setCallback(mockProxyCallBackHandler);
+        // } else {
+        enhancer.setCallback(cglibProxyCallBackHandler);
+        // }
         return (T) enhancer.create();
     }
 }
