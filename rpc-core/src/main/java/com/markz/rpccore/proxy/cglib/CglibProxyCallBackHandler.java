@@ -1,5 +1,6 @@
 package com.markz.rpccore.proxy.cglib;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.markz.common.entity.rpc.RpcRequest;
 import com.markz.common.entity.rpc.RpcResponse;
 import com.markz.rpccore.request.RpcRequestManager;
@@ -37,7 +38,13 @@ public class CglibProxyCallBackHandler extends AbstractProxyCallBackHandler {
             // TODO 封装自定义异常
             throw new RuntimeException(rpcResponse.getException());
         }
-        return rpcResponse.getResult();
+        // 3. 将拿到的 result 反序列化为 Object
+        Object result = rpcResponse.getResult();
+        Class<?> resultType = rpcResponse.getResultType();
+        if (result instanceof JSONObject) {
+            result = ((JSONObject) result).toJavaObject(resultType);
+        }
+        return result;
     }
 
     @Override
