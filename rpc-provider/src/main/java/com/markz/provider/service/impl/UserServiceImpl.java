@@ -11,7 +11,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Integer id) {
         User user = new User();
-        user.setId(1);
+        user.setId(id);
         user.setUsername("markz");
         user.setPassword("1234");
         return user;
