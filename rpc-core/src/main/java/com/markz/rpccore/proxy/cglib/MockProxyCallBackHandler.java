@@ -14,15 +14,15 @@ import java.lang.reflect.Method;
 @Component
 public class MockProxyCallBackHandler extends AbstractProxyCallBackHandler {
     @Override
-    public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
-        RpcRequest rpcRequest = getRpcRequest(method);
+    public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) {
+        RpcRequest rpcRequest = getRpcRequest(method, objects);
         return getRpcResponse(rpcRequest);
     }
 
     @Override
-    public String getRpcResponse(RpcRequest rpcRequest) {
+    public <T> T getRpcResponse(RpcRequest rpcRequest) {
         String serviceName = rpcRequest.getServiceName();
         String methodName = rpcRequest.getMethodName();
-        return serviceName + "." + methodName + "hello";
+        return (T) (serviceName + "." + methodName + "hello");
     }
 }
