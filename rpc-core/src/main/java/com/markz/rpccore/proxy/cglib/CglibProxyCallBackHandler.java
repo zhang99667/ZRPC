@@ -28,9 +28,16 @@ public class CglibProxyCallBackHandler extends AbstractProxyCallBackHandler {
             return methodProxy.invokeSuper(o, objects);
         }
         // 1. 封装 RpcRequest
-        RpcRequest rpcRequest = getRpcRequest(method);
+        RpcRequest rpcRequest = getRpcRequest(method, objects);
+
         // 2. 发送 RpcRequest，拿到 RpcResponse
-        return getRpcResponse(rpcRequest).getResult();
+        RpcResponse rpcResponse = getRpcResponse(rpcRequest);
+        if (rpcResponse.getException() != null) {
+            rpcResponse.setResult("当前服务不可用");
+            // TODO 封装自定义异常
+            throw new RuntimeException(rpcResponse.getException());
+        }
+        return rpcResponse.getResult();
     }
 
     @Override
