@@ -26,9 +26,9 @@ public class ProtocolConstant {
 
     // ************* FrameDecoder *************
     /**
-     * 最大帧长度 1kb
+     * 最大帧长度 1mb
      */
-    public static final Integer MAX_FRAME_LENGTH = 0x400;
+    public static final Integer MAX_FRAME_LENGTH = 0x400 * 0x400;
 
     /**
      * 长度字段的偏移量
