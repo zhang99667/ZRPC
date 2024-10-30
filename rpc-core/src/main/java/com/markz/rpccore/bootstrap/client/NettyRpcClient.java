@@ -66,7 +66,6 @@ public class NettyRpcClient {
                     if (rpcResponse == null) {
                         throw new RuntimeException("远程调用异常");
                     }
-                    log.info("收到响应:{}", rpcResponse);
                     return rpcResponse;
                 } catch (InterruptedException | ExecutionException e) {
                     log.info("获取异步结果错误,{}", e.getMessage());
