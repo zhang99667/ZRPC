@@ -16,7 +16,7 @@ public class UserController {
 
     @GetMapping
     public User getUserById(Integer id) {
-        return null;
+        return userService.getUserById(1);
     }
 
     @GetMapping("/test")
