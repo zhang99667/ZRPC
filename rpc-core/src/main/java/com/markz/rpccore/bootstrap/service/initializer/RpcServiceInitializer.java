@@ -10,8 +10,11 @@ import com.markz.rpccore.handler.ServerIdleHeartBeatHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 
-// 服务端 pipeline
+/**
+ * 服务端 pipeline
+ */
 public class RpcServiceInitializer extends ChannelInitializer {
+
     @Override
     protected void initChannel(Channel ch) {
         // outbound handler
