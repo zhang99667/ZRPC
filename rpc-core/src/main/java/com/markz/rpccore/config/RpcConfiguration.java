@@ -45,4 +45,9 @@ public class RpcConfiguration {
      * 指示当前是 client 还是 server
      */
     private String cors;
+
+    /**
+     * 是否启用 mock 模式
+     */
+    private boolean mock;
 }
