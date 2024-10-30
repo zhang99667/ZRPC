@@ -1,6 +1,8 @@
 package com.markz.rpccore.proxy.cglib;
 
 
+import com.markz.rpccore.config.RpcConfiguration;
+import com.markz.rpccore.holder.RpcConfigurationHolder;
 import com.markz.rpccore.proxy.ProxyFactory;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.stereotype.Component;
@@ -13,8 +15,6 @@ import javax.annotation.Resource;
 @Component
 public class CglibRequestProxyFactory implements ProxyFactory {
 
-    // TODO 这里要能根据配置文件自动切换
-
     @Resource
     private CglibProxyCallBackHandler cglibProxyCallBackHandler;
 
@@ -26,7 +26,12 @@ public class CglibRequestProxyFactory implements ProxyFactory {
 
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(clazz);
-        enhancer.setCallback(cglibProxyCallBackHandler);
+        RpcConfiguration rpcConfig = RpcConfigurationHolder.getRpcConfig();
+        if (rpcConfig.isMock()) {
+            enhancer.setCallback(mockProxyCallBackHandler);
+        } else {
+            enhancer.setCallback(cglibProxyCallBackHandler);
+        }
         return (T) enhancer.create();
     }
 }
